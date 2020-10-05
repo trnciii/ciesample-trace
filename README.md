@@ -1,92 +1,73 @@
-以下のサイトを参考にして、黒いウィンドウを出すとこまでやります。適宜参照してください。
-[https://qiita.com/souring001/items/64881ff1383a15271b5b](https://qiita.com/souring001/items/64881ff1383a15271b5b)
+## 準備
+本章はもとの授業資料の第一回 **２次元図形を描く--線・円-- ** の前半に対応します。<br>
+このリポジトリをダウンロードしたら`line.xcodeproj` を開き、実行できるか確認してください。
 
-完成したプロジェクトファイルも置いてるので、最悪zipでダウンロードして確認してみてください
 
-# 各種インストール
-## xcode
-App store で探してインストールしてください  
-
-## brew
-homebrew を使って授業で使うライブラリをインストールします。<br>
-まだ入れてない方は、ターミナルから下のコードでいれましょう。[https://brew.sh/](https://brew.sh/)
-```commandline
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-```
-
-## GLFW
-ターミナルで以下のコードをいれます
-```commandline
-brew install glfw
-```
----
-
-#プロジェクトの作成
-まず xcode で新しいC++プロジェクトを作成します<br>
-参考サイトをみたほうがはやいと思う
-
-## ライブラリ追加
-* Build phases -> Link Binary with Libraries から ``OpenGL.framework`` を選択
-* 同じリストに ``/usr/local/Cellar/glfw/3.3/lib`` にある　``libglfw.3.3.dylib``　をドロップして追加
-![](docs/im_link.png)
-
-## ヘッダ追加
-Build settings -> Header Search Path の項目に`/usr/local/Cellar/glfw/3.3.2/include`を追加.<br>リストの右側をrecursive に設定<br>
-![](docs/im_header.png)
-
-## コードを書いてウィンドウを出す  
-main.cpp に以下のソースをコピペしてビルドします (左上の再生ボタン)<br>
-[https://www.glfw.org/documentation.html](https://www.glfw.org/documentation.html)<br>
-
+## 背景色の指定 (windows と異なります)
 ```cpp
-#include <GLFW/glfw3.h>
-
-int main(void)
+void myinit(GLFWwindow** window)
 {
-    GLFWwindow* window;
-
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
-    return 0;
+    glfwInit(); ←説明①
+    *window = glfwCreateWindow(600, 600, "lines", NULL, NULL); ←説明②
+    glfwMakeContextCurrent(*window); ←説明③
+    glClearColor(0, 0, 0, 1); ←説明④
 }
 ```
-いろいろ警告が出るかもしれませんが、このような "Hello World" という真っ黒いウィンドウが出ればOKです。<br><br>
-![](docs/im_window.png)
+ここでは初期化したいウィンドウを引数として受け取り、様々な設定を行います。
 
-## 連絡先
-なにかつまづいた場合はどこに質問すればいいんだろう
-とりあえず実質mac 担当の土井は以下で連絡がつきます
-doi.kohei.682@s.kyushu-u.ac.jp<br>
-[@trnciii](twitter.com/trnciii)
+説明①　`glfwInit()` は ウィンドウを表示するための下準備 です。必ず書きます。
 
-moodle かslack か考えると思います。
+説明②　ここで作りたいウィンドウの情報を設定します。最初の3つの引数でウィンドウの幅、高さ、タイトルを設定しています。残りはフルスクリーンモードや複数のウィンドウを使う時の設定項目ですが、今回は使わないのでNULLにしておきます。
 
-# FAQ
-??
+説明③　作ったウィンドウを以降の処理の対象として設定する関数です。
+
+説明④　glClearColor(); は背景の塗りつぶしの色を決めています。 括弧内左から赤、緑、青色、不透明度の強さを 0.0から1.0の間で設定しています。 この場合だと全ての色が0.0ですので、 黒になります。試しに、
+```cpp
+glClearColor(0, 0, 0, 1);
+　　　↓
+glClearColor(0, 1, 0, 1);
+```
+と変更して実行してみて下さい。背景の色は緑色になるはずです。<br>
+変数の型についてはこのあとの円のところで説明します。
+
+## 直線を描く (windows と共通)
+続いてdisplay関数内で、一本の線を描いています。
+```cpp
+void display()
+{
+    glClear(GL_COLOR_BUFFER_BIT);　←説明①
+
+    glMatrixMode(GL_MODELVIEW);　←説明②
+    glLoadIdentity();
+
+    glColor3f(1.0f, 1.0f, 1.0f);　←説明③
+    glBegin(GL_LINES);　←説明④
+        glVertex2f( -0.5f, 0.0f);　←説明⑤
+        glVertex2f(  0.5f, 0.0f);
+    glEnd();
+}
+```
+説明①　 glClear(); では 画面を背景色で消去 しています。
+
+説明②　glMatrixMode(); glLoadIdentity();については後述します。
+
+説明③　 glColor3f(); ではこれから描く 頂点の色 を設定しています。
+括弧内の値は左から赤、緑、青の強さで、それぞれ0.0～1.0の値をとります。 ここでは全ての値が1ですので、色は白になります。
+
+説明④ glBegin(); はどのような図形を描くかを指定しています。 GL_LINES は線を描く命令です。
+
+説明⑤　 glVertex2f(); は描く 図形の頂点座標 を設定しています。
+描ける図形のタイプについては、[こちら](http://www.design.kyushu-u.ac.jp/~rtsuruno/lectures/cge2020/surface.html#type)をご覧下さい。
+
+そして、glEnd();で定義を終わります。
+
+以下のプログラムについては、また次の章で解説することにして、 早速このプログラムに変更を加えましょう。
+
+## 課題 (windows と共通)
+windows のほうの資料に従っていろいろな図形を描いてみてください。
+
+
+
+
+
+
