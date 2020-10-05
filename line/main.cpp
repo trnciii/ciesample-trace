@@ -19,6 +19,7 @@ void myinit(GLFWwindow** window)
     glfwInit();
     *window = glfwCreateWindow(600, 600, "lines", NULL, NULL); // 600*600の大きさで lines という名前のウィンドウをつくる
     glfwMakeContextCurrent(*window);
+    glClearColor(0, 0, 0, 1); // 背景色の設定
 }
 
 //--描画内容--------------------------------------------------------------------
