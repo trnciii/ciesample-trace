@@ -1,9 +1,11 @@
 以下のサイトを参考にして、黒いウィンドウを出すとこまでやります。適宜参照してください。
 [https://qiita.com/souring001/items/64881ff1383a15271b5b](https://qiita.com/souring001/items/64881ff1383a15271b5b)
 
+完成したプロジェクトファイルも置いてるので、最悪zipでダウンロードして確認してみてください
+
 # 各種インストール
 ## xcode
-App store で探してインストールしてください	
+App store で探してインストールしてください  
 
 ## brew
 homebrew を使って授業で使うライブラリをインストールします。<br>
@@ -32,9 +34,9 @@ brew install glfw
 Build settings -> Header Search Path の項目に`/usr/local/Cellar/glfw/3.3.2/include`を追加.<br>リストの右側をrecursive に設定<br>
 ![](docs/im_header.png)
 
-## コードを書いてウィンドウを出す	
+## コードを書いてウィンドウを出す  
 main.cpp に以下のソースをコピペしてビルドします (左上の再生ボタン)<br>
-[https://www.glfw.org/documentation.html](https://www.glfw.org/documentation.html)
+[https://www.glfw.org/documentation.html](https://www.glfw.org/documentation.html)<br>
 
 ```cpp
 #include <GLFW/glfw3.h>
@@ -75,7 +77,7 @@ int main(void)
     return 0;
 }
 ```
-いろいろ警告が出るかもしれませんが、このような "Hello World" という真っ黒いウィンドウが出ればOKです。<br>
+いろいろ警告が出るかもしれませんが、このような "Hello World" という真っ黒いウィンドウが出ればOKです。<br><br>
 ![](docs/im_window.png)
 
 ## 連絡先
@@ -86,5 +88,5 @@ doi.kohei.682@s.kyushu-u.ac.jp<br>
 
 moodle かslack か考えると思います。
 
-#FAQ
+# FAQ
 ??
