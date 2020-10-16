@@ -72,25 +72,45 @@ void display(void)
     glLoadIdentity();
 
     // makebox(1.0,1.0,1.0);
-    ↓　ポリゴン表示に書き換え
+    // ↓　ポリゴン表示に書き換え
     makebox(1.0, 1.0, 1.0, GL_POLYGON);
 }
 ```
 このプログラムを実行すると面の前後関係が正しく表示されない、以下のような状態になります。<br>
 ![](docs/im_noDepth.png)<bt>
 
-陰面消去をおこなうには、プログラムを以下のように書き換えます。
+陰面消去をおこなうには、二つの関数`myinit`と`display`を以下のように書き換えます。
+
+[ myinit関数 ]
+```cpp
+void myinit(GLFWwindow** window)
+{
+    glfwInit();
+    
+    int w = 600;
+    int h = 600;
+    *window = glfwCreateWindow(w, h, "surface", NULL, NULL);
+    glClearColor(0, 0, 0, 1);
+    
+    glViewport( 0, 0, (GLsizei)600, (GLsizei)600 );
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    
+    reshape(*window, w, h);
+    glEnable(GL_DEPTH_TEST); // 追加
+}
+```
+
+[ display関数 ]
 ```cpp
 void display(void)
 {
     // glClear(GL_COLOR_BUFFER_BIT);
-    　↓ 
+    // ↓ GL_DEPTH_BUFFER_BIT　を追加
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    glEnable(GL_DEPTH_TEST); // 追加
     
     makebox(1.0,1.0,1.0,GL_POLYGON);
 }
@@ -99,7 +119,7 @@ void display(void)
 ![](docs/im_depth.png)<br>
 デプスバッファというのはそれぞれの画素ごとにポリゴンまでの距離(奥行, 深度)を記録しておくもので、この情報を利用して一番手前にあるポリゴンを表示することができます。
 
-`glEnable(GL_DEPTH_TEST)` で奥行のチェックして画素を書き換えるという設定をしています。また、描画の最初にデプスバッファを初期化するため、`glClear`関数に GL_DEPTH_BUFFER_BIT を与えています。
+ウィンドウ初期化のときに `glEnable(GL_DEPTH_TEST)` を書くことで、以降の描画で奥行のチェックして画素を書き換えるという設定をしています。また、毎フレームの最初にデプスバッファを初期化するため、`glClear`関数に `GL_DEPTH_BUFFER_BIT` を与えています。
 
 ## 課題1
 前回までのプログラムを参考に、箱を増殖させて次のようなものを作ってみてください。<br>
