@@ -21,10 +21,6 @@ void myinit(GLFWwindow** window)
     glfwMakeContextCurrent(*window);
     glClearColor(0, 0, 0, 1); // 背景色の設定
     
-    glViewport( 0, 0, (GLsizei)600, (GLsizei)600 ); //ウィンドウ全体をビューポートにする
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    
     reshape(*window, w, h); // 視点の初期化をおこなう
 }
 
@@ -65,7 +61,7 @@ int main(void)
     myinit(&window); // ウィンドウのポインタを渡して初期化
     
 
-    //コールバック関数 (キーボードやマウスの動きを捕まえる)
+    //コールバック関数の登録 (キーボードやマウスの動きを捕まえる)
     glfwSetWindowSizeCallback(window, reshape);
     
     

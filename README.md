@@ -92,10 +92,6 @@ void myinit(GLFWwindow** window)
     *window = glfwCreateWindow(w, h, "surface", NULL, NULL);
     glClearColor(0, 0, 0, 1);
     
-    glViewport( 0, 0, (GLsizei)600, (GLsizei)600 );
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    
     reshape(*window, w, h);
     glEnable(GL_DEPTH_TEST); // 追加
 }
