@@ -12,7 +12,12 @@
 * ["押しっぱなし"の取得](#"押しっぱなし"の取得)
 	* [フラグによる制御](#フラグによる制御)
 	* [課題2](#課題2)
-* [](#)
+* [方向キーでキャラクターを動かす](#方向キーでキャラクターを動かす)
+	* [準備-ロボットの表示](*準備-ロボットの表示)
+	* [進行方向の制御](*進行方向の制御)
+	* [歩行アニメーションの追加](*歩行アニメーションの追加)
+	* [課題3](*課題3)
+	* [課題4](*課題4)
 
 
 ## 準備
@@ -149,6 +154,7 @@ void display(int frame)
 
 ### 課題1
 矢印キーの左右に応じて立方体が移動するようにしてください。
+後から使うので、左右の移動を保持する変数名は`pos_x` とすることを推奨します。
 
 
 ## "押しっぱなし"の取得
@@ -209,6 +215,303 @@ void display(int frame)
 キーを押した瞬間に`true`, キーを離した瞬間に`false`を代入すればいいです。
 
 ## 方向キーでキャラクターを動かす
+
+###	準備-ロボットの表示
+キャラクターを動かすことで、さまざまな制御に慣れましょう。
+かなり長いですが、立方体の描画を以下のロボットで置き換えます。
+
+```cpp
+glPushMatrix();
+    /* 腰 */
+    glScalef(0.3, 0.3, 0.3);
+    glTranslated( pos_x, 0.0, pos_z ); //全体の移動
+    // glRotated( dir, 0.0, 1.0, 0.0 );//全体の回転
+
+    glColor3d(0.0, 1.0, 1.0);
+    makeboxROBOT( 1.3, 0.7, 1.0, GL_POLYGON );//腰パーツ
+
+    /* 胴体 */
+    glPushMatrix();
+        glTranslated(0.0, 0.4, 0.0);
+        glRotated( 0.0, 0.0, 0.0, 0.0 );//胴体の回転*****
+        glTranslated(0.0, 0.3, 0.0);
+        glColor3d(0.8, 0.0, 0.0);
+        makeboxROBOT( 0.6, 1.0, 0.6, GL_POLYGON );//腹パーツ
+
+        glTranslated(0.0, 0.6, 0.0);
+        glColor3d(1.0, 0.0, 0.0);
+        makeboxROBOT( 1.8, 1.2, 1.0, GL_POLYGON );//胸パーツ
+            
+        glTranslated(0.0, 0.3, 0.0);
+
+        /* 左手 */
+        glPushMatrix();
+            glTranslated(1.3, 0.0, 0.0);
+
+            glRotated( 0.0, 0.0, 0.0, 0.0 );//左上腕の回転*****
+            
+            glTranslated(0.0, -0.5, 0.0);
+            glColor3d(0.0, 1.0, 0.0);
+            makeboxROBOT( 0.5, 1.5, 0.5, GL_POLYGON );//上腕パーツ
+
+            glTranslated(0.0, -0.5, 0.0);
+            glPushMatrix();
+                glTranslated(0.0, 0.0, 0.0);
+                glRotated(-40.0, 1.0, 0.0, 0.0);
+                
+                glRotated( 0.0, 0.0, 0.0, 0.0 );//左腕の回転*****
+                
+                glTranslated(0.0, -0.5, 0.0);
+                glColor3d(0.0, 0.8, 0.0);
+                makeboxROBOT( 0.6, 1.6, 0.7, GL_POLYGON );//腕パーツ
+
+                glTranslated(0.0, -0.9, 0.0);
+                glColor3d(1.0, 1.0, 0.0);
+                makeboxROBOT( 0.5, 0.7, 0.5, GL_POLYGON );//手パーツ
+            glPopMatrix();
+        glPopMatrix();
+
+        /* 右手 */
+        glPushMatrix();
+            glTranslated(-1.3, 0.0, 0.0);
+
+            glRotated( 0.0, 0.0, 0.0, 0.0 );//右上腕の回転*****
+            
+            glTranslated(0.0, -0.5, 0.0);
+            glColor3d(0.0, 1.0, 0.0);
+            makeboxROBOT( 0.5, 1.5, 0.5, GL_POLYGON );//上腕パーツ
+
+            glTranslated(0.0, -0.5, 0.0);
+            glPushMatrix();
+                glTranslated(0.0, 0.0, 0.0);
+                glRotated(-40.0, 1.0, 0.0, 0.0);
+                
+                glRotated( 0.0, 0.0, 0.0, 0.0 );//右腕の回転*****
+                
+                glTranslated(0.0, -0.5, 0.0);
+                glColor3d(0.0, 0.8, 0.0);
+                makeboxROBOT( 0.6, 1.6, 0.7, GL_POLYGON );//腕パーツ
+
+                glTranslated(0.0, -0.9, 0.0);
+                glColor3d(1.0, 1.0, 0.0);
+                makeboxROBOT( 0.5, 0.7, 0.5, GL_POLYGON );//手パーツ
+            glPopMatrix();
+        glPopMatrix();
+
+        /* 頭 */
+        glPushMatrix();
+            glTranslated(0.0, 0.4, 0.0);
+            glRotated( 0.0, 0.0, 0.0, 0.0 );//頭の回転*****
+            glColor3d(0.8, 0.8, 0.0);
+            makeboxROBOT( 0.4, 1.2, 0.4, GL_POLYGON );//首パーツ
+
+            glTranslated(0.0, 0.6, 0.0);
+            glColor3d(1.0, 1.0, 0.0);
+            makeboxROBOT( 1.0, 1.0, 1.0, GL_POLYGON );//頭パーツ
+        glPopMatrix();
+    glPopMatrix();
+
+    /* 右足 */
+    glPushMatrix();
+        glTranslated(-0.6, -0.7, 0.0);
+        glRotated(-10.0, 1.0, 0.0, 0.0);
+        glRotated( 0.0, 0.0, 0.0, 0.0 );//右腿の回転*****
+        
+        glTranslated(0.0, -0.5, 0.0);
+        glColor3d(0.0, 1.0, 0.0);
+        makeboxROBOT( 0.5, 1.5, 0.5, GL_POLYGON );//腿パーツ
+
+        glTranslated(0.0, -0.5, 0.0);
+
+        glPushMatrix();
+            glTranslated(0.0, 0.0, 0.0);
+            glRotated(20.0, 1.0, 0.0, 0.0);
+            
+            glRotated( 0.0, 0.0, 0.0, 0.0 );//右脛の回転*****
+            
+            glTranslated(0.0, -0.5, 0.0);
+            glColor3d(0.0, 0.8, 0.0);
+            makeboxROBOT( 0.6, 1.6, 0.7, GL_POLYGON );//脛パーツ
+
+            glTranslated(0.0, -1.4, 0.3);
+            glColor3d(1.0, 1.0, 0.0);
+            glRotated(10.0, 1.0, 0.0, 0.0);
+            makeboxROBOT( 0.7, 0.6, 1.4, GL_POLYGON );//足パーツ
+        glPopMatrix();
+    glPopMatrix();
+                
+    /* 左足 */
+    glPushMatrix();
+        glTranslated(0.6, -0.7, 0.0);
+        glRotated(-10.0, 1.0, 0.0, 0.0);
+
+        glRotated( 0.0, 0.0, 0.0, 0.0 );//左腿の回転*****
+        
+        glTranslated(0.0, -0.5, 0.0);
+        glColor3d(0.0, 1.0, 0.0);
+        makeboxROBOT( 0.5, 1.5, 0.5, GL_POLYGON );//腿パーツ
+
+        glTranslated(0.0, -0.5, 0.0);
+
+        glPushMatrix();
+            glTranslated(0.0, 0.0, 0.0);
+            glRotated(20.0, 1.0, 0.0, 0.0);
+            
+            glRotated( 0.0, 0.0, 0.0, 0.0 );//左脛の回転*****
+            
+            glTranslated(0.0, -0.5, 0.0);
+            glColor3d(0.0, 0.8, 0.0);
+            makeboxROBOT( 0.6, 1.6, 0.7, GL_POLYGON );//脛パーツ
+
+            glTranslated(0.0, -1.4, 0.3);
+            glColor3d(1.0, 1.0, 0.0);
+            glRotated(10.0, 1.0, 0.0, 0.0);
+            makeboxROBOT( 0.7, 0.6, 1.4, GL_POLYGON );//足パーツ
+
+        glPopMatrix();
+    glPopMatrix();
+glPopMatrix();
+```
+
+ロボットが表示され、`pos_z, pos_z`によって全体の移動ができることを確認してください。
+
+![](docs/robot.png)
+
+### 進行方向の制御
+立方体のときには気になりませんでしたが、キャラクターが移動するときには進行方向を向いてもらう方が自然に感じられますので、キーで入力した方向に応じてロボットを回転させます。
+
+やることは移動と同じです。大域変数に方向を入れる変数`float dir` を用意し、キーのフラグを利用して値を決めます。
+回転は、ロボットの上のほうにある腰パーツでおこないます。`//全体の回転`となっている部分をコメントアウトして利用してください。
+
+```cpp
+// 大域変数
+float pos_x = 0;
+float pos_z = 0;
+
+bool up = false;
+bool down = false;
+bool left = false;
+bool right = false;
+
+float dir = 0; // 追加
+
+// 中略
+
+void display(int frame)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    if(up){
+    	pos_z -= 0.1;
+    	dir = 180;
+    }
+    
+    if(down){
+    	pos_z += 0.1;
+    	dir = 0;
+    }
+
+    if(left){
+    	pos_x -= 0.1;
+    	dir = -90;
+    }
+
+    if(right){
+    	pos_x += 0.1;
+    	dir = 90;
+    }
+    
+   	// ロボットの描画
+```
+
+これでロボットの向きを変えることができました。
+
+![](docs/move.gif)
+
+### 歩行アニメーションの追加
+さらに、移動しているときには歩いているようなアニメーションを加えてみましょう。
+とりあえず脚だけ振らせてみます。
+歩行の一周期を0\~360度として回転し続ける変数`phase` を用意し、いずれかの方向キーが押されているときに値を更新します。
+
+また、股関節や膝の回転を更新します。
+
+```cpp
+// 大域変数
+float pos_x = 0;
+float pos_z = 0;
+
+bool up = false;
+bool down = false;
+bool left = false;
+bool right = false;
+
+float dir = 0;
+float phase = 0; // 追加
+
+// 中略
+
+// 各変数の更新
+    if(up){
+        pos_z -= 0.1;
+        dir = 180;
+    }
+    
+    if(down){
+        pos_z += 0.1;
+        dir = 0;
+    }
+
+    if(left){
+        pos_x -= 0.1;
+        dir = -90;
+    }
+
+    if(right){
+        pos_x += 0.1;
+        dir = 90;
+    }
+    
+    // 何らかのキーが押されているとき
+    if(up || down || left || right){
+        // phase が0~360度をまわる
+        phase++;
+        if(phase>360)phase = 0;
+    }
+
+    // ロボットの描画
+```
+
+また、ロボットの脚にある以下の部分のパラメータを埋め、回転させます。(コメントを参考に探してください)
+
+* `glRotated( 10*sin(phase*0.2), 1.0, 0.0, 0.0 );//右腿の回転*****`
+* `glRotated( 10*sin(phase*0.2), 0.0, 0.0, 0.0 );//右脛の回転*****`
+* `glRotated(-10*sin(phase*0.2), 1.0, 0.0, 0.0 );//左腿の回転*****`
+* `glRotated(-10*sin(phase*0.2), 1.0, 0.0, 0.0 );//左脛の回転*****`
+
+完成するとこのようになります。
+
+![](docs/walk.gif)
+
+### 課題3
+以下の問題点を解決するよう移動の制御を改善してください。
+
+**問題点** 現在、二つのキーを同時に押すと斜めに移動するころができるが、ロボットの向きは四方向のいずれかとなってしまうので、複数のキーを押してもロボットが進行方向を向くようにしたい。
+
+### 課題4
+立方体または適当なキャラクターをひとつ、マウスカーソルを追いかけるように動かしてください。
+
+![](docs/follow.gif)
+
+マウスカーソルの位置は`MousePosFunc`の引数である`x, y`から取り出して利用します。
+斜めからの視点では、カーソルの位置とロボットの移動する平面の対応を厳密に考えるのは難しいので、そのあたりは適当でいいです。
+
+---
+
+課題のほかにも、アニメーションや移動方法を変更してみてください。
+また、作品をslack のほうに共有してくれると嬉しいです。
 
 
 
