@@ -373,7 +373,7 @@ glPushMatrix();
 glPopMatrix();
 ```
 
-ロボットが表示され、`pos_z, pos_z`によって全体の移動ができることを確認してください。
+ロボットが表示され、`pos_x, pos_z`によって全体の移動ができることを確認してください。
 
 ![](docs/robot.png)
 
