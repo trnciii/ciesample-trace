@@ -123,17 +123,6 @@ void MousePosFunc(GLFWwindow* window, double x, double y)
 	
 	stick_x =  ( x - w/2 ) / (w/2);//マウスを右に動かしたら、スティッキも右に
 	stick_y = -( y - h/2 ) / (h/2);//マウスを下に動かしたら、スティッキも下に
-	
-	for( int i=0; i < CUBE_NUM; i++ )
-	{
-		if( cube_life[i] == 0 )
-		{
-			cube_life[i] = MAX_LIFE;
-			cube_x[i] = stick_x;
-			cube_y[i] = stick_y;
-			break;
-		}
-	}
 }
 
 //--マウスのホイール関数--------------------------------------------------------
@@ -155,27 +144,6 @@ void display(int frame)
 	GLUquadricObj *sphere = gluNewQuadric();
 	GLUquadricObj *cylinder = gluNewQuadric();
 
-	
-	// 描画可能直方体のＨＰの減少
-	for( int i=0; i < CUBE_NUM; i++ )
-		if( cube_life[i] != 0 ) cube_life[i]--;
-	
-
-	// 直方体の描画
-	for( int i=0; i < CUBE_NUM; i++ )
-	{
-		if( cube_life[i] != 0 )
-		{
-			double scale = cube_life[i] / MAX_LIFE;
-			
-			glPushMatrix();
-			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, yellow );
-			glTranslated( cube_x[i], cube_y[i], -0.9f );
-			glScaled( scale, scale, scale );
-			makebox( 0.075, 0.075, 0.00, GL_POLYGON );
-			glPopMatrix();
-		}
-	}
 
 	// ステッキの描画
 	glPushMatrix();
