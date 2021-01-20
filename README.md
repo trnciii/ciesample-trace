@@ -157,13 +157,13 @@ void display(int frame)
 		if( cube_life[i] != 0 )
 		{
 			cube_life[i]--; // 寿命をへらす
-            double scale = cube_life[i]/MAX_LIFE; // 線の太さの割合
+			double scale = cube_life[i]/MAX_LIFE; // 線の太さの割合
 
 			glPushMatrix();
-                glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, yellow );
-                glTranslated( cube_x[i], cube_y[i], -0.9f );
-                glScalef(scale, scale, scale); // 線を細くする
-                makebox( 0.075, 0.075, 0.00, GL_POLYGON );
+				glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, yellow );
+				glTranslated( cube_x[i], cube_y[i], -0.9f );
+				glScalef(scale, scale, scale); // 線を細くする
+				makebox( 0.075, 0.075, 0.00, GL_POLYGON );
 			glPopMatrix();
 		}
 	}
